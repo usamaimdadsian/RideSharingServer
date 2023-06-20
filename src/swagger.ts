@@ -5,9 +5,9 @@ import { Application } from "express"
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
-        title: 'Your API Title',
+        title: 'Ride Sharing',
         version: '1.0.0',
-        description: 'API documentation for your project',
+        description: 'API documentation for Ride Sharing Server',
     },
 };
 

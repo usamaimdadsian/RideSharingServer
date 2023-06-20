@@ -1,4 +1,5 @@
 import { CustomHelpers } from 'joi';
+import { Coordinate } from '@/modules/route/RouteInterface';
 
 const objectId = (value: string, helpers: CustomHelpers) => {
     if (!value.match(/^[0-9a-fA-F]{24}$/)) {
@@ -17,7 +18,43 @@ const password = (value: string, helpers: CustomHelpers) => {
     return value;
 };
 
+const coordinate = (value: Coordinate, helpers: CustomHelpers<Coordinate>) => {
+    const latitudeRange = { min: -90, max: 90 };
+    const longitudeRange = { min: -180, max: 180 };
+
+
+    if (typeof value.latitude !== 'number') {
+        return helpers.message({ custom: 'Latitude value must be a number' });
+    }
+    if (typeof value.longitude !== 'number') {
+        return helpers.message({ custom: 'Longitude value must be a number' });
+    }
+
+    if (value.latitude < latitudeRange.min || value.latitude > latitudeRange.max) {
+        return helpers.message({ custom: 'Invalid latitude value' });
+    }
+    if (value.longitude < longitudeRange.min || value.longitude > longitudeRange.max) {
+        return helpers.message({ custom: 'Invalid longitude value' });
+    }
+
+    return value;
+};
+
+const coordinateArray = (value, helpers) => {
+    if (!Array.isArray(value)) {
+        return helpers.message({ custom: 'Invalid coordinate array value' });
+    }
+
+    for (const point of value) {
+        const validationResult = coordinate(point, helpers);
+        if (validationResult !== point) {
+            return validationResult;
+        }
+    }
+
+    return value;
+};
 
 export default {
-    objectId, password
+    objectId, password, coordinate, coordinateArray
 }

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { userRouter, authRouter } from '@/modules';
+import { userRouter, authRouter, routeRouter } from '@/modules';
 
 
 export function configureRoutes(router: Router) {
@@ -11,6 +11,8 @@ export function configureRoutes(router: Router) {
 
     router.use('/users', userRouter);
 
-    router.use('/auth', authRouter)
+    router.use('/auth', authRouter);
+
+    router.use('/routes', routeRouter);
 
 }

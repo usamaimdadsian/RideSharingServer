@@ -2,7 +2,7 @@ import Joi from "joi";
 import config from "@/config/config";
 import { customValidators } from "@/utils";
 
-export class <validation_name> {
+export class DriverValidation {
   static create = {
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -25,13 +25,13 @@ export class <validation_name> {
 
   static show = {
     params: Joi.object().keys({
-      <name>Id: Joi.string().custom(customValidators.objectId),
+      driverId: Joi.string().custom(customValidators.objectId),
     }),
   };
 
   static update = {
     params: Joi.object().keys({
-      <name>Id: Joi.required().custom(customValidators.objectId),
+      driverId: Joi.required().custom(customValidators.objectId),
     }),
     body: Joi.object()
       .keys({
@@ -44,7 +44,7 @@ export class <validation_name> {
 
   static delete = {
     params: Joi.object().keys({
-      <name>Id: Joi.string().custom(customValidators.objectId),
+      driverId: Joi.string().custom(customValidators.objectId),
     }),
   };
 }

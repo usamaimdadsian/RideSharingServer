@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  title: Driver
+
+components:
+  schemas:
+    Driver:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - name
+        - email
+
+paths:
+  /drivers:
+    get:
+      tags: 
+        - Driver
+      summary: Get all drivers
+      description: Retrieve a list of all drivers.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Driver"
+    
+    post:
+      tags: 
+        - Driver
+      summary: Create a driver
+      description: Create a new driver.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Driver"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+
+
+
+  /drivers/{id}:
+    get:
+      tags: 
+        - Driver
+      summary: Get driver by ID
+      description: Retrieve a driver by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Driver ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+        "404":
+          description: Driver not found
+
+    put:
+      tags: 
+        - Driver
+      summary: Edit driver by ID
+      description: Update an existing driver by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Driver ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Driver"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+        "404":
+          description: Driver not found
+
+    delete:
+      tags: 
+        - Driver
+      summary: Delete driver by ID
+      description: Delete a driver by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Driver ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Driver deleted successfully
+        "404":
+          description: Driver not found

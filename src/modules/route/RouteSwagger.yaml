@@ -1,0 +1,301 @@
+info:
+  version: "1.0.0"
+  title: "API Documentation"
+tags:
+  - name: Routes
+    description: Route management and retrieval
+
+components:
+  schemas:
+    Route:
+      type: object
+      properties:
+        name:
+          type: string
+        distance:
+          type: number
+          description: "Distance should be in meters"
+        duration:
+          type: number
+          description: "Duration should be in seconds"
+        
+        trafficCondition:
+          type: string
+          enum: ["low","normal","high"]
+
+        roadType:
+          type: string
+          enum: ["local","roll_road","highway"]
+        wayPoints:
+          type: array
+          items:
+            $ref: '#/components/fields/Coordinate'
+
+      example:
+        name: fake name
+        distance: 1000
+        duration: 35000
+        trafficCondition: normal
+        roadType: local
+        wayPoints: [{longitude: 29, latitude: 50}]
+
+  fields:
+    Coordinate:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+
+paths:
+  /routes:
+    post:
+      summary: Create a route
+      description: Only admins can create other routes.
+      tags:
+        - Routes
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - distance
+                - duration
+                - wayPoints
+              properties:
+                name:
+                  type: string
+                distance:
+                  type: number
+                  description: "Distance should be in meters"
+                duration:
+                  type: number
+                  description: "Duration should be in seconds"
+                
+                trafficCondition:
+                  type: string
+                  enum: ["low","normal","high"]
+
+                roadType:
+                  type: string
+                  enum: ["local","roll_road","highway"]
+                wayPoints:
+                  type: array
+                  items:
+                    $ref: '#/components/fields/Coordinate'
+
+              example:
+                name: fake name
+                distance: 1000
+                duration: 35000
+                trafficCondition: normal
+                roadType: local
+                wayPoints: [{longitude: 29, latitude: 50}]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    get:
+      summary: Get all routes
+      description: Only admins can retrieve all routes.
+      tags:
+        - Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Route name
+        - in: query
+          name: roadType
+          schema:
+            type: string
+          description: Route Road Type local, toll_road, or highway
+        - in: query
+          name: trafficCondition
+          schema:
+            type: string
+          description: Route Traffic Conditions low, normal, or high
+
+
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+          description: sort by query in the form of field:desc/asc (ex. name:asc)
+        - in: query
+          name: projectBy
+          schema:
+            type: string
+          description: project by query in the form of field:hide/include (ex. name:hide)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          default: 10
+          description: Maximum number of routes
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Route'
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 1
+                  totalResults:
+                    type: integer
+                    example: 1
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+  /routes/{id}:
+    get:
+      summary: Get a route
+      description: Logged in routes can fetch only their own route information. Only admins can fetch other routes.
+      tags:
+        - Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Route id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update a route
+      description: Logged in routes can only update their own information. Only admins can update other routes.
+      tags:
+        - Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Route id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                distance:
+                  type: number
+                  description: "Distance should be in meters"
+                duration:
+                  type: number
+                  description: "Duration should be in seconds"
+                
+                trafficCondition:
+                  type: string
+                  enum: ["low","normal","high"]
+
+                roadType:
+                  type: string
+                  enum: ["local","roll_road","highway"]
+                wayPoints:
+                  type: array
+                  items:
+                    $ref: '#/components/fields/Coordinate'
+              example:
+                name: fake name
+                distance: 1000
+                duration: 35000
+                trafficCondition: normal
+                roadType: local
+                wayPoints: [{longitude: 29, latitude: 50}]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete a route
+      description: Logged in routes can delete only themselves. Only admins can delete other routes.
+      tags:
+        - Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Route id
+      responses:
+        "200":
+          description: No content
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
