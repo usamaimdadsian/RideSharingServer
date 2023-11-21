@@ -1,9 +1,7 @@
-import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import validator from 'validator';
 
 
-import config from '@/config/config';
 import { toJSON, paginate } from '@/utils';
 import { IDriverDoc, IDriverModel } from './DriverInterface';
 
@@ -13,6 +11,16 @@ const driverSchema = new mongoose.Schema<IDriverDoc, IDriverModel>(
       type: String,
       required: true,
       trim: true,
+    },
+    dateOfBirth: {
+      type: Date,
+      required: true,
+      trim: true
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true
     },
     email: {
       type: String,
@@ -26,27 +34,56 @@ const driverSchema = new mongoose.Schema<IDriverDoc, IDriverModel>(
         }
       },
     },
-    password: {
+    cnic: {
       type: String,
       required: true,
       trim: true,
-      minlength: 8,
-      validate(value: string) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error('Password must contain at least one letter and one number');
-        }
-      },
-      private: true, // used by the toJSON plugin
+      unique: true,
     },
-    role: {
+
+    licenseNumber: {
       type: String,
-      enum: config.roles,
-      default: 'driver',
+      required: true,
+      trim: true,
+      unique: true,
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
+    licenseExpiryDate: {
+      type: Date,
+      trim: true,
     },
+    licenseType: {
+      type: String,
+      trim: true,
+    },
+
+    emergencyContact: {
+      type: String,
+      trim: true,
+    },
+    drivingRecord: {
+      type: String,
+      trim: true,
+    },
+
+
+    criminalRecord: {
+      type: String,
+      trim: true,
+    },
+    performance: {
+      type: Number,
+      trim: true,
+    },
+    ratings: {
+      type: Number,
+      trim: true,
+    },
+    applicationStatus: {
+      type: String,
+      trim: true,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
+    }
   },
   {
     timestamps: true,
@@ -58,8 +95,30 @@ driverSchema.plugin(toJSON);
 driverSchema.plugin(paginate);
 
 /**
- * Check if email is taken
- * @param {string} email - The driver's email
+ * Check if cnic is taken
+ * @param {string} cnic - The driver's cnic
+ * @param {ObjectId} [excludeDriverId] - The id of the driver to be excluded
+ * @returns {Promise<boolean>}
+ */
+driverSchema.static('isCnicTaken', async function (cnic: string, excludeDriverId: mongoose.ObjectId): Promise<boolean> {
+  const driver = await this.findOne({ cnic, _id: { $ne: excludeDriverId } });
+  return !!driver;
+});
+
+/**
+ * Check if licenseNumber is taken
+ * @param {string} licenseNumber - The driver's licenseNumber
+ * @param {ObjectId} [excludeDriverId] - The id of the driver to be excluded
+ * @returns {Promise<boolean>}
+ */
+driverSchema.static('isLicenseTaken', async function (licenseNumber: string, excludeDriverId: mongoose.ObjectId): Promise<boolean> {
+  const driver = await this.findOne({ licenseNumber, _id: { $ne: excludeDriverId } });
+  return !!driver;
+});
+
+/**
+ * Check if licenseNumber is taken
+ * @param {string} licenseNumber - The driver's licenseNumber
  * @param {ObjectId} [excludeDriverId] - The id of the driver to be excluded
  * @returns {Promise<boolean>}
  */
@@ -68,21 +127,10 @@ driverSchema.static('isEmailTaken', async function (email: string, excludeDriver
   return !!driver;
 });
 
-/**
- * Check if password matches the driver's password
- * @param {string} password
- * @returns {Promise<boolean>}
- */
-driverSchema.method('isPasswordMatch', async function (password: string): Promise<boolean> {
-  const driver = this;
-  return bcrypt.compare(password, driver.password);
-});
+
 
 driverSchema.pre('save', async function (next) {
   const driver = this;
-  if (driver.isModified('password')) {
-    driver.password = await bcrypt.hash(driver.password, 8);
-  }
   next();
 });
 

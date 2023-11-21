@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  title: Vehicle
+
+components:
+  schemas:
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - name
+        - email
+
+paths:
+  /vehicles:
+    get:
+      tags: 
+        - Vehicle
+      summary: Get all vehicles
+      description: Retrieve a list of all vehicles.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+    
+    post:
+      tags: 
+        - Vehicle
+      summary: Create a vehicle
+      description: Create a new vehicle.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+
+
+
+  /vehicles/{id}:
+    get:
+      tags: 
+        - Vehicle
+      summary: Get vehicle by ID
+      description: Retrieve a vehicle by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Vehicle ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+        "404":
+          description: Vehicle not found
+
+    put:
+      tags: 
+        - Vehicle
+      summary: Edit vehicle by ID
+      description: Update an existing vehicle by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Vehicle ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+        "404":
+          description: Vehicle not found
+
+    delete:
+      tags: 
+        - Vehicle
+      summary: Delete vehicle by ID
+      description: Delete a vehicle by their ID.
+      parameters:
+        - in: path
+          name: id
+          description: Vehicle ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Vehicle deleted successfully
+        "404":
+          description: Vehicle not found

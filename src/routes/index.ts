@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { userRouter, authRouter, routeRouter } from '@/modules';
+import { userRouter, authRouter, routeRouter, driverRouter, vehicleRouter } from '@/modules';
 
 
 export function configureRoutes(router: Router) {
@@ -15,4 +15,7 @@ export function configureRoutes(router: Router) {
 
     router.use('/routes', routeRouter);
 
+    router.use('/drivers', driverRouter);
+
+    router.use('/vehicles', vehicleRouter);
 }

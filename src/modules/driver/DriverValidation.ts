@@ -5,17 +5,25 @@ import { customValidators } from "@/utils";
 export class DriverValidation {
   static create = {
     body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().custom(customValidators.password),
       name: Joi.string().required(),
-      role: Joi.string().required().valid(...config.roles),
+      dateOfBirth: Joi.date().required(),
+      phoneNumber: Joi.string().required().custom(customValidators.mobile),
+      email: Joi.string().required().email(),
+      cnic: Joi.string().required().custom(customValidators.cnic),
+
+      licenseNumber: Joi.string().required(),
+      licenseExpiryDate: Joi.date(),
+      licenseType: Joi.string(),
+
+      emergencyContact: Joi.string(),
+      drivingRecord: Joi.string()
     }),
   };
 
   static index = {
     query: Joi.object().keys({
       name: Joi.string(),
-      role: Joi.string(),
+
       sortBy: Joi.string(),
       projectBy: Joi.string(),
       limit: Joi.number().integer(),
@@ -35,9 +43,23 @@ export class DriverValidation {
     }),
     body: Joi.object()
       .keys({
-        email: Joi.string().email(),
-        password: Joi.string().custom(customValidators.password),
         name: Joi.string(),
+        dateOfBirth: Joi.date(),
+        phoneNumber: Joi.string().custom(customValidators.mobile),
+        email: Joi.string().email(),
+        cnic: Joi.string().custom(customValidators.cnic),
+
+        licenseNumber: Joi.string(),
+        licenseExpiryDate: Joi.date(),
+        licenseType: Joi.string(),
+
+        emergencyContact: Joi.string(),
+        drivingRecord: Joi.string(),
+
+        criminalRecord: Joi.string(),
+        performance: Joi.number(),
+        ratings: Joi.number(),
+        applicationStatus: Joi.string().valid('pending', 'approved', 'rejected')
       })
       .min(1),
   };

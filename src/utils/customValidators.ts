@@ -17,6 +17,18 @@ const password = (value: string, helpers: CustomHelpers) => {
     }
     return value;
 };
+const mobile = (value: string, helpers: CustomHelpers) => {
+    if (!value.match(/^\+\d{1,3}\d{7,14}$/)) {
+        return helpers.message({ custom: '{{#label}} must be in the following form +XXXXXXXXXX' });
+    }
+    return value;
+};
+const cnic = (value: string, helpers: CustomHelpers) => {
+    if (!value.match(/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/)) {
+        return helpers.message({ custom: '{{#label}} must be in following form XXXXX-XXXXXXX-X' });
+    }
+    return value;
+};
 
 const coordinate = (value: Coordinate, helpers: CustomHelpers<Coordinate>) => {
     const latitudeRange = { min: -90, max: 90 };
@@ -56,5 +68,5 @@ const coordinateArray = (value, helpers) => {
 };
 
 export default {
-    objectId, password, coordinate, coordinateArray
+    objectId, password, coordinate, coordinateArray, mobile, cnic
 }
